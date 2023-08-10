@@ -1,1 +1,1 @@
-# type-chat-client
+# Type Chat Client
