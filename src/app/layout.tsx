@@ -2,7 +2,6 @@ import "@/styles";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import favicon from "@/assets/favicon.ico";
-import Sidebar from "@/components/Sidebar";
 import classnames from "classnames";
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,8 +14,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  sidebar,
 }: {
   children: React.ReactNode;
+  sidebar: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning={true}>
@@ -26,9 +27,9 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/icon?family=Material+Icons"
         />
       </head>
-      <body className={classnames(inter.className, "h-screen ")}>
+      <body className={classnames(inter.className, "h-screen")}>
         <div className="flex">
-          <Sidebar />
+          {sidebar}
           {children}
         </div>
       </body>
