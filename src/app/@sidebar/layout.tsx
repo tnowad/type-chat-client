@@ -6,18 +6,24 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { Avatar, Typography } from "@mui/material";
 
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-import SwitchAccountIcon from "@mui/icons-material/SwitchAccount";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
+import SettingsIcon from "@mui/icons-material/Settings";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 export default function SidebarLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const [isSideNavOpen, setIsSideNavOpen] = useState<boolean>(false);
+  const pathname = usePathname();
 
   const sideNavItems = [
-    { icon: <ChatBubbleIcon />, text: "Friends", link: "/conversation" },
-    { icon: <SwitchAccountIcon />, text: "Activity", link: "/setting" },
+    { icon: <ChatBubbleIcon />, text: "Chat", link: "/conversation" },
+    { icon: <AlternateEmailIcon />, text: "Activity", link: "/activity" },
+    { icon: <AccountBoxIcon />, text: "Profile", link: "/profile" },
+    { icon: <SettingsIcon />, text: "Setting", link: "/setting" },
   ];
 
   return (
@@ -34,15 +40,15 @@ export default function SidebarLayout({
               <li
                 key={index}
                 className={classNames(
-                  "flex items-center p-2 hover:bg-slate-100 rounded transition-all",
+                  "flex items-center p-2 hover:bg-slate-100 rounded transition-all text-gray-600",
                   {
-                    "bg-slate-100": location.pathname === item.link,
+                    "bg-slate-100": pathname == item.link,
                   }
                 )}
               >
-                <Link href={item.link}>
-                  <div className="flex">
-                    <div>{item.icon}</div>
+                <Link href={item.link} className="w-full">
+                  <div className={"flex"}>
+                    <div className="mx-3">{item.icon}</div>
                     {isSideNavOpen && (
                       <Typography className="ml-2">{item.text}</Typography>
                     )}
@@ -65,12 +71,12 @@ export default function SidebarLayout({
               }
             )}
           >
-            <Avatar className="mx-2" />
+            <Avatar className="mx-2 bg-slate-300" />
             {isSideNavOpen && <Typography>Nguyen Minh Tuan</Typography>}
           </div>
           <Avatar
             onClick={() => setIsSideNavOpen(!isSideNavOpen)}
-            className="text-2xl bg-slate-100 text-black"
+            className="text-2xl bg-slate-300 text-white"
           >
             {isSideNavOpen ? (
               <MenuOpenIcon fontSize="inherit" />
