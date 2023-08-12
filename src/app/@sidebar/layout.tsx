@@ -26,6 +26,18 @@ export default function SidebarLayout({
     { icon: <SettingsIcon />, text: "Setting", link: "/setting" },
   ];
 
+  const ignoreLayout = [
+    "/",
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+  ];
+
+  if (ignoreLayout.includes(pathname)) {
+    return null;
+  }
+
   return (
     <div className="h-screen flex">
       <div
