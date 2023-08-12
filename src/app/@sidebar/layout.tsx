@@ -32,9 +32,13 @@ export default function SidebarLayout({
     "/register",
     "/forgot-password",
     "/reset-password",
+    "/verify",
   ];
 
-  if (ignoreLayout.includes(pathname)) {
+  if (
+    ignoreLayout.includes(pathname) ||
+    pathname.startsWith("/reset-password")
+  ) {
     return null;
   }
 
