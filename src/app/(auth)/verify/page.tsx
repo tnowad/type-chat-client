@@ -11,15 +11,26 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import NextLink from "next/link";
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+const validationSchema = yup.object({
+  otp: yup
+    .string()
+    .length(4, "OTP should be have 4 characters")
+    .required("OTP is required"),
+});
 
 export default function VerifyOTP() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      otp: data.get("otp"),
-    });
-  };
+  const formik = useFormik({
+    initialValues: {
+      otp: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
 
   return (
     <Container component="main" maxWidth="xs">
@@ -41,7 +52,12 @@ export default function VerifyOTP() {
         <Typography variant="body2" sx={{ mt: 1 }}>
           Please enter the verification code sent to your email.
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+        <Box
+          component="form"
+          onSubmit={formik.handleSubmit}
+          noValidate
+          sx={{ mt: 3 }}
+        >
           <TextField
             margin="normal"
             required
@@ -51,6 +67,11 @@ export default function VerifyOTP() {
             name="otp"
             autoComplete="off"
             autoFocus
+            value={formik.values.otp}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.otp && Boolean(formik.errors.otp)}
+            helperText={formik.touched.otp && formik.errors.otp}
           />
           <Button
             type="submit"
