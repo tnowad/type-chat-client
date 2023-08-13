@@ -8,6 +8,19 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+const validationSchema = yup.object({
+  password: yup
+    .string()
+    .min(8, "Password should be of minimum 8 characters length")
+    .required("Password is required"),
+  confirmPassword: yup
+    .string()
+    .min(8, "Password should be of minimum 8 characters length")
+    .required("Password is required"),
+});
 
 export default function ResetPassword({
   params,
@@ -15,16 +28,17 @@ export default function ResetPassword({
   params: { token: string };
 }) {
   const { token } = params;
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      token,
-      newPassword: data.get("newPassword"),
-      confirmPassword: data.get("confirmPassword"),
-    });
-    // Add logic to handle password reset here
-  };
+
+  const formik = useFormik({
+    initialValues: {
+      password: "password",
+      confirmPassword: "password",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      alert(JSON.stringify({ ...values, token }, null, 2));
+    },
+  });
 
   return (
     <Container component="main" maxWidth="xs">
@@ -43,7 +57,12 @@ export default function ResetPassword({
         <Typography component="h1" variant="h5">
           Reset Password
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+        <Box
+          component="form"
+          onSubmit={formik.handleSubmit}
+          noValidate
+          sx={{ mt: 3 }}
+        >
           <TextField
             margin="normal"
             required
@@ -53,6 +72,11 @@ export default function ResetPassword({
             type="password"
             id="newPassword"
             autoComplete="new-password"
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
           />
           <TextField
             margin="normal"
@@ -63,6 +87,16 @@ export default function ResetPassword({
             type="password"
             id="confirmPassword"
             autoComplete="new-password"
+            value={formik.values.confirmPassword}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              formik.touched.confirmPassword &&
+              Boolean(formik.errors.confirmPassword)
+            }
+            helperText={
+              formik.touched.confirmPassword && formik.errors.confirmPassword
+            }
           />
           <Button
             type="submit"
