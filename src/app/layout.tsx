@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import favicon from "@/assets/favicon.ico";
 import classnames from "classnames";
 const inter = Inter({ subsets: ["latin"] });
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   title: "Type Chat",
@@ -28,6 +29,18 @@ export default function RootLayout({
         />
       </head>
       <body className={classnames(inter.className, "h-screen")}>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
         <div className="flex">
           {sidebar}
           {children}
