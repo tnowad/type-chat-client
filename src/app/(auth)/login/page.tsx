@@ -12,8 +12,12 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import NextLink from "next/link";
-import { useFormik } from "formik";
+import { useFormik, ErrorMessage } from "formik";
 import * as yup from "yup";
+import authApi from "@/apis/auth.api";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const validationSchema = yup.object({
   email: yup
@@ -27,14 +31,28 @@ const validationSchema = yup.object({
 });
 
 export default function Login() {
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       email: "email@example.com",
       password: "password",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      try {
+        const response = await authApi.login(values);
+        const { success, data, message } = response.data;
+        if (success) {
+          toast.success(message);
+          router.push("/conversation");
+        } else {
+          toast.info(message);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error(error.response?.data.message);
+        }
+      }
     },
   });
   return (
