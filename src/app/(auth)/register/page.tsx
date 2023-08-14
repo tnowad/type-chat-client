@@ -13,6 +13,10 @@ import Container from "@mui/material/Container";
 import NextLink from "next/link";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import api from "@/utils/api.utils";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 
 const validationSchema = yup.object({
   firstName: yup.string().required("First name is required."),
@@ -28,6 +32,7 @@ const validationSchema = yup.object({
 });
 
 export default function Register() {
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       firstName: "John",
@@ -36,8 +41,21 @@ export default function Register() {
       password: "password",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      try {
+        const response = await api.post("/api/auth/register", values);
+        const { success, data, message } = response.data;
+        if (success) {
+          toast.success(message);
+          router.push("/verify");
+        } else {
+          toast.info(message);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error(error.response?.data.message);
+        }
+      }
     },
   });
 
