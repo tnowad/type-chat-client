@@ -1,33 +1,15 @@
-import Cookies from "js-cookie";
+import { parse, serialize } from "cookie";
 
-export const accessTokenName = "accessToken" as const;
-export const refreshTokenName = "refreshToken" as const;
+export const setCookie = (name: string, value: string, options = {}) => {
+  const cookieValue = serialize(name, value, options);
+  document.cookie = cookieValue;
+};
 
-export function setAccessToken(token: string) {
-  return Cookies.set(accessTokenName, token);
-}
+export const getCookie = (name: string) => {
+  const cookies = parse(document.cookie);
+  return cookies[name];
+};
 
-export function setRefreshToken(token: string) {
-  return Cookies.set(refreshTokenName, token);
-}
-
-export function getAccessToken() {
-  return Cookies.get(accessTokenName);
-}
-
-export function getRefreshToken() {
-  return Cookies.get(refreshTokenName);
-}
-
-export function removeAccessToken() {
-  return Cookies.remove(accessTokenName);
-}
-
-export function removeRefreshToken() {
-  return Cookies.remove(refreshTokenName);
-}
-
-export function clearTokens() {
-  removeAccessToken();
-  removeRefreshToken();
-}
+export const removeCookie = (name: string) => {
+  document.cookie = serialize(name, "", { maxAge: -1 });
+};
