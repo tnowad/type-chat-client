@@ -5,6 +5,7 @@ import favicon from "@/assets/favicon.ico";
 import classnames from "classnames";
 const inter = Inter({ subsets: ["latin"] });
 import { ToastContainer } from "react-toastify";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export const metadata: Metadata = {
   title: "Type Chat",
@@ -42,8 +43,10 @@ export default function RootLayout({
           theme="light"
         />
         <div className="flex">
-          {sidebar}
-          {children}
+          <AuthProvider>
+            {sidebar}
+            {children}
+          </AuthProvider>
         </div>
       </body>
     </html>
