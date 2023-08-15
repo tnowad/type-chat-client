@@ -6,6 +6,7 @@ import User from "@/types/User";
 import { getCookie, removeCookie, setCookie } from "@/utils/cookie.utils";
 import authApi from "@/apis/auth.api";
 import api from "@/utils/api.utils";
+import profileApi from "@/apis/profile.api";
 
 interface AuthContextInterface {
   user: User | null;
@@ -51,8 +52,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     if (accessToken && refreshToken) {
       api.defaults.headers["authorization"] = `Bearer ${accessToken}`;
-      authApi
-        .me()
+      profileApi
+        .getProfile()
         .then((response) => {
           const user = response.data.data?.user;
           if (user)
