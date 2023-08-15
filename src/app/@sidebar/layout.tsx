@@ -1,6 +1,6 @@
 "use client";
 import classNames from "classnames";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Avatar, Typography } from "@mui/material";
@@ -11,6 +11,7 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AuthContext } from "@/contexts/AuthContext";
 export default function SidebarLayout({
   children,
 }: {
@@ -18,6 +19,7 @@ export default function SidebarLayout({
 }) {
   const [isSideNavOpen, setIsSideNavOpen] = useState<boolean>(false);
   const pathname = usePathname();
+  const { user } = useContext(AuthContext);
 
   const sideNavItems = [
     { icon: <ChatBubbleIcon />, text: "Chat", link: "/conversation" },
@@ -75,9 +77,12 @@ export default function SidebarLayout({
           </ul>
         </div>
         <div
-          className={classNames("flex w-full items-center p-3 gap-3", {
-            "flex-col": !isSideNavOpen,
-          })}
+          className={classNames(
+            "flex w-full items-center p-3 gap-3 justify-between",
+            {
+              "flex-col": !isSideNavOpen,
+            }
+          )}
         >
           <div
             className={classNames(
@@ -88,7 +93,7 @@ export default function SidebarLayout({
             )}
           >
             <Avatar className="mx-2 bg-slate-300" />
-            {isSideNavOpen && <Typography>Nguyen Minh Tuan</Typography>}
+            {isSideNavOpen && <Typography>{user?.firstName}</Typography>}
           </div>
           <Avatar
             onClick={() => setIsSideNavOpen(!isSideNavOpen)}

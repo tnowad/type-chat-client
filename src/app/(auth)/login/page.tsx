@@ -18,6 +18,8 @@ import authApi from "@/apis/auth.api";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useContext } from "react";
+import { AuthContext } from "@/contexts/AuthContext";
 
 const validationSchema = yup.object({
   email: yup
@@ -31,6 +33,7 @@ const validationSchema = yup.object({
 });
 
 export default function Login() {
+  const { login } = useContext(AuthContext);
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -44,7 +47,10 @@ export default function Login() {
         const { success, data, message } = response.data;
         if (success) {
           toast.success(message);
-          router.push("/conversation");
+          if (data) {
+            login(data?.accessToken, data?.refreshToken);
+            router.push("/conversation");
+          }
         } else {
           toast.info(message);
         }
