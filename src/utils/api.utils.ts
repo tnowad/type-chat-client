@@ -8,4 +8,10 @@ const api = Axios.create({
   },
 });
 
+export interface ApiResponse<T = object> {
+  success?: boolean;
+  message?: string;
+  data?: T;
+}
+
 export default api;

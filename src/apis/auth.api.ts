@@ -1,10 +1,5 @@
 import User from "@/types/User";
-import api from "@/utils/api.utils";
-export interface ApiResponse<T = object> {
-  success?: boolean;
-  message?: string;
-  data?: T;
-}
+import api, { ApiResponse } from "@/utils/api.utils";
 
 export interface LoginResponseData {
   accessToken: string;
@@ -37,8 +32,6 @@ const authApi = {
 
   refreshToken: async (values: { token: string; newPassword: string }) =>
     await api.post<ApiResponse>(`/api/auth/refresh-token`, values),
-
-  me: async () => await api.get<ApiResponse<{ user: User }>>(`/api/auth/me`),
 };
 
 export default authApi;
