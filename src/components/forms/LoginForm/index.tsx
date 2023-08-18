@@ -14,12 +14,9 @@ import Container from "@mui/material/Container";
 import NextLink from "next/link";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import authApi from "@/apis/auth.api";
-import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { useContext } from "react";
-import { AuthContext } from "@/contexts/AuthContext";
+import useAuth from "@/hooks/useAuth";
 
 const validationSchema = yup.object({
   email: yup
@@ -33,7 +30,7 @@ const validationSchema = yup.object({
 });
 
 export default function LoginForm() {
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -43,21 +40,10 @@ export default function LoginForm() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        const response = await authApi.login(values);
-        const { success, data, message } = response.data;
-        if (success) {
-          toast.success(message);
-          if (data) {
-            login(data?.accessToken, data?.refreshToken);
-            router.push("/conversation");
-          }
-        } else {
-          toast.info(message);
-        }
+        await login(values.email, values.password);
+        router.push("/conversation");
       } catch (error) {
-        if (error instanceof AxiosError) {
-          toast.error(error.response?.data.message);
-        }
+        toast.error("Login failed!");
       }
     },
   });
