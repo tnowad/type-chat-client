@@ -13,7 +13,7 @@ import Container from "@mui/material/Container";
 import NextLink from "next/link";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import api from "@/utils/api.utils";
+import axiosInstance from "@/utils/axios.utils";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
@@ -43,7 +43,7 @@ export default function RegisterForm() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        const response = await api.post("/api/auth/register", values);
+        const response = await axiosInstance.post("/api/auth/register", values);
         const { success, data, message } = response.data;
         if (success) {
           toast.success(message);
