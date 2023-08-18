@@ -1,5 +1,5 @@
-import Layout from "./layout";
-import Page from "./page";
+import Conversation from "@/app/conversation/page";
+
 export default function Default() {
-  return <Page />;
+  return <Conversation />;
 }
