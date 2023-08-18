@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-const api = Axios.create({
+const axiosInstance = Axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     Accept: "application/json",
@@ -14,4 +14,4 @@ export interface ApiResponse<T = object> {
   data?: T;
 }
 
-export default api;
+export default axiosInstance;

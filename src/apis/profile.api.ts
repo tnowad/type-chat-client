@@ -1,9 +1,9 @@
-import User from "@/types/User";
-import api, { ApiResponse } from "@/utils/api.utils";
+import { User } from "@/types/model";
+import axiosInstance, { ApiResponse } from "@/utils/axios.utils";
 
 const profileApi = {
   getProfile: async () =>
-    await api.get<ApiResponse<{ user: User }>>(`/api/profile`),
+    await axiosInstance.get<ApiResponse<{ user: User }>>(`/api/profile`),
 };
 
 export default profileApi;
