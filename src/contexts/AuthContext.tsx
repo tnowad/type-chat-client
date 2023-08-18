@@ -1,80 +1,89 @@
 "use client";
-
-import React, { createContext, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import User from "@/types/User";
-import { getCookie, removeCookie, setCookie } from "@/utils/cookie.utils";
-import authApi from "@/apis/auth.api";
-import api from "@/utils/api.utils";
+import { UserCredentials } from "@/types/auth";
+import axiosInstance from "@/utils/axios.utils";
+import { CookiesProvider, useCookies } from "react-cookie";
+import {
+  createContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { User } from "@/types/model";
 import profileApi from "@/apis/profile.api";
 
-interface AuthContextInterface {
+interface AuthContextType {
   user: User | null;
-  login: (accessToken: string, refreshToken: string) => void;
-  isLoggedIn: boolean;
+  login: (userCredentials: UserCredentials) => void;
   logout: () => void;
 }
 
-const initialState: AuthContextInterface = {
-  user: null,
-  login: () => {},
-  logout: () => {},
-  isLoggedIn: false,
-};
-
-export const AuthContext = createContext(initialState);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: React.ReactNode;
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const login = (accessToken: string, refreshToken: string) => {
-    setCookie("accessToken", accessToken, { path: "/" });
-    setCookie("refreshToken", refreshToken, { path: "/" });
-    setIsLoggedIn(true);
-  };
-
-  const logout = () => {
-    removeCookie("accessToken");
-    removeCookie("refreshToken");
-    setIsLoggedIn(false);
-    setUser(null);
-    router.push("/login");
-  };
+  const [cookies, setCookie] = useCookies(["accessToken", "refreshToken"]);
 
   useEffect(() => {
-    const accessToken = getCookie("accessToken");
-    const refreshToken = getCookie("refreshToken");
-
-    if (accessToken && refreshToken) {
-      api.defaults.headers["authorization"] = `Bearer ${accessToken}`;
-      profileApi
-        .getProfile()
-        .then((response) => {
-          const user = response.data.data?.user;
-          if (user)
-            setUser({
-              _id: user._id,
-              createAt: user.createAt,
-              email: user.email,
-              firstName: user.firstName,
-              lastName: user.lastName,
-              verified: user.verified,
-            });
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
+    const fetchUser = () => {
+      const accessToken = cookies.accessToken;
+      if (accessToken) {
+        axiosInstance.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${accessToken}`;
+        profileApi.getProfile().then((response) => {
+          if (response.data.data) {
+            setUser(response.data.data.user);
+          }
         });
-    }
-  }, []);
+      }
+    };
+    return () => {
+      fetchUser();
+    };
+  }, [cookies.accessToken]);
 
-  const value = useMemo(
-    () => ({ user, isLoggedIn, login, logout }),
-    [user, isLoggedIn]
+  const login = useCallback(
+    (userCredentials: UserCredentials) => {
+      setCookie("accessToken", userCredentials.accessToken.token, {
+        path: "/",
+      });
+      setCookie("refreshToken", userCredentials.refreshToken.token, {
+        path: "/",
+      });
+      if (!user && userCredentials.user) {
+        setUser(userCredentials.user);
+      }
+    },
+    [setCookie, user]
   );
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+
+  const logout = useCallback(() => {
+    setCookie("accessToken", "", { expires: new Date(0) });
+    setCookie("refreshToken", "", { expires: new Date(0) });
+    setUser(null);
+  }, [setCookie]);
+
+  const contextValue = useMemo(
+    () => ({
+      user,
+      login,
+      logout,
+    }),
+    [login, logout, user]
+  );
+
+  return (
+    <CookiesProvider>
+      <AuthContext.Provider value={contextValue}>
+        {children}
+      </AuthContext.Provider>
+    </CookiesProvider>
+  );
 };
+
+export default AuthContext;
