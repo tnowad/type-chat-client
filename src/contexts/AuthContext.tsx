@@ -49,11 +49,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = useCallback(
     (userCredentials: UserCredentials) => {
+      console.log(userCredentials);
       setCookie("accessToken", userCredentials.accessToken.token, {
         path: "/",
+        expires: new Date(userCredentials.accessToken.expiresAt),
       });
       setCookie("refreshToken", userCredentials.refreshToken.token, {
         path: "/",
+        expires: new Date(userCredentials.refreshToken.expiresAt),
       });
       if (!user && userCredentials.user) {
         setUser(userCredentials.user);
