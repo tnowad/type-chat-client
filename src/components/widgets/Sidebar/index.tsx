@@ -64,7 +64,7 @@ export default function Sidebar({ sideNavItems, children }: SidebarProps) {
         >
           <div
             className={classNames(
-              "flex items-center hover:bg-slate-50 rounded transition-all",
+              "flex items-center hover:bg-slate-50 rounded transition-all w-full",
               { "justify-center": !isSideNavOpen }
             )}
           >
