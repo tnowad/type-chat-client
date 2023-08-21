@@ -1,16 +1,17 @@
 "use client";
-import { UserCredentials } from "@/types/auth";
-import axiosInstance from "@/utils/axios.utils";
-import { CookiesProvider, useCookies } from "react-cookie";
-import {
+import React, {
   createContext,
   useCallback,
   useEffect,
   useMemo,
   useState,
 } from "react";
-import { User } from "@/types/model";
+import { useCookies } from "react-cookie";
+import axiosInstance from "@/utils/axios.utils";
 import profileApi from "@/apis/profile.api";
+import authApi from "@/apis/auth.api";
+import { UserCredentials } from "@/types/auth";
+import { User } from "@/types/model";
 
 interface AuthContextType {
   user: User | null;
@@ -24,42 +25,68 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [cookies, setCookie] = useCookies(["accessToken", "refreshToken"]);
 
   useEffect(() => {
-    const fetchUser = () => {
+    const fetchUser = async () => {
       const accessToken = cookies.accessToken;
+      const refreshToken = cookies.refreshToken;
+
       if (accessToken) {
         axiosInstance.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${accessToken}`;
-        profileApi.getProfile().then((response) => {
+        try {
+          const response = await profileApi.getProfile();
           if (response.data.data) {
             setUser(response.data.data.user);
           }
-        });
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
+      } else if (refreshToken) {
+        try {
+          const response = await authApi.refreshToken({ refreshToken });
+          const newAccessToken = response.data.data?.accessToken;
+          if (newAccessToken) {
+            setCookie("accessToken", newAccessToken.token, {
+              path: "/",
+              expires: new Date(newAccessToken.expiresAt),
+            });
+
+            axiosInstance.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${newAccessToken.token}`;
+            const profileResponse = await profileApi.getProfile();
+            if (profileResponse.data.data) {
+              setUser(profileResponse.data.data.user);
+            }
+          }
+        } catch (error) {
+          console.error("Error refreshing access token:", error);
+        }
       }
     };
-    return () => {
-      fetchUser();
-    };
-  }, [cookies.accessToken]);
+
+    fetchUser();
+  }, [cookies, setCookie]);
 
   const login = useCallback(
     (userCredentials: UserCredentials) => {
-      console.log(userCredentials);
-      setCookie("accessToken", userCredentials.accessToken.token, {
+      const { accessToken, refreshToken, user: loggedInUser } = userCredentials;
+      setCookie("accessToken", accessToken.token, {
         path: "/",
-        expires: new Date(userCredentials.accessToken.expiresAt),
+        expires: new Date(accessToken.expiresAt),
       });
-      setCookie("refreshToken", userCredentials.refreshToken.token, {
+      setCookie("refreshToken", refreshToken.token, {
         path: "/",
-        expires: new Date(userCredentials.refreshToken.expiresAt),
+        expires: new Date(refreshToken.expiresAt),
       });
-      if (!user && userCredentials.user) {
-        setUser(userCredentials.user);
+
+      if (!user && loggedInUser) {
+        setUser(loggedInUser);
       }
     },
     [setCookie, user]
@@ -72,20 +99,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [setCookie]);
 
   const contextValue = useMemo(
-    () => ({
-      user,
-      login,
-      logout,
-    }),
+    () => ({ user, login, logout }),
     [login, logout, user]
   );
 
   return (
-    <CookiesProvider>
-      <AuthContext.Provider value={contextValue}>
-        {children}
-      </AuthContext.Provider>
-    </CookiesProvider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 };
 

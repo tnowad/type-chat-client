@@ -1,6 +1,6 @@
 import axiosInstance, { ApiResponse } from "@/utils/axios.utils";
 import { User } from "@/types/model";
-import { UserCredentials } from "@/types/auth";
+import { AccessToken, UserCredentials } from "@/types/auth";
 
 const authApi = {
   login: async (email: string, password: string) =>
@@ -28,8 +28,11 @@ const authApi = {
   resetPassword: async (values: { token: string; newPassword: string }) =>
     await axiosInstance.post<ApiResponse>(`/api/auth/reset-password`, values),
 
-  refreshToken: async (values: { token: string; newPassword: string }) =>
-    await axiosInstance.post<ApiResponse>(`/api/auth/refresh-token`, values),
+  refreshToken: async (values: { refreshToken: string }) =>
+    await axiosInstance.post<ApiResponse<{ accessToken: AccessToken }>>(
+      `/api/auth/refresh-token`,
+      values
+    ),
 };
 
 export default authApi;
