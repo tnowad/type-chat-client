@@ -42,7 +42,7 @@ export default function RootLayout({
           pauseOnHover
           theme="light"
         />
-        <div className="flex">
+        <div className="flex w-screen h-screen overflow-hidden">
           <AuthProvider>
             {sidebar}
             {children}
