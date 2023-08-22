@@ -12,9 +12,8 @@ const useAuth = () => {
   const { login: loginWithCredentials } = context;
 
   const login = async (email: string, password: string) => {
-    const response = await authApi.login(email, password);
-    if (response.data.data) {
-      const credential = response.data.data;
+    const credential = await authApi.login(email, password);
+    if (credential) {
       loginWithCredentials(credential);
     }
   };
