@@ -1,7 +1,10 @@
+"use client";
 import Axios, { AxiosError, AxiosResponse } from "axios";
 
 const getAccessToken = () => {
-  return document.cookie.split("accessToken=")[1];
+  try {
+    if (document) return document.cookie.split("accessToken=")[1];
+  } catch (error) {}
 };
 
 const accessToken = getAccessToken();
