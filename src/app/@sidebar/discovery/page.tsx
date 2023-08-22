@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import { User } from "@/types/model";
 import userApi from "@/apis/user.api";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 export default function DiscoverySidebarPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const router = useRouter();
   useEffect(() => {
     const fetchAllUsers = async () => {
       const users = await userApi.getAllUsers();
@@ -29,10 +31,10 @@ export default function DiscoverySidebarPage() {
       </Paper>
       <div className="h-full w-full flex flex-col gap-y-2">
         {users.map((user) => (
-          <Link
-            href={`/user/${user._id}`}
+          <div
+            onClick={() => router.push(`/user/${user._id}`)}
             key={user._id}
-            className="flex w-full"
+            className="flex w-full cursor-pointer"
           >
             <div className="mr-2">
               <Avatar className="h-[50px] w-[50px]">
@@ -45,7 +47,7 @@ export default function DiscoverySidebarPage() {
               <Typography>{user.firstName + " " + user.lastName}</Typography>
               <Typography>{user.email}</Typography>
             </div>
-          </Link>
+          </div>
         ))}
       </div>
     </div>
