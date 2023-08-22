@@ -1,36 +1,63 @@
-import axiosInstance, { ApiResponse } from "@/utils/axios.utils";
+import axiosInstance, { ApiResponse, makeApiCall } from "@/utils/axios.utils";
 import { User } from "@/types/model";
 import { AccessToken, UserCredentials } from "@/types/auth";
+import { AxiosError, AxiosResponse } from "axios";
 
 const authApi = {
   login: async (email: string, password: string) =>
-    await axiosInstance.post<ApiResponse<UserCredentials>>(`/api/auth/login`, {
-      email,
-      password,
-    }),
+    makeApiCall<UserCredentials>(
+      (data) =>
+        axiosInstance.post<ApiResponse<UserCredentials>>(
+          `/api/auth/login`,
+          data
+        ),
+      { email, password }
+    ),
 
   register: async (values: {
     firstName: string;
     lastName: string;
     email: string;
     password: string;
-  }) => await axiosInstance.post<ApiResponse>(`/api/auth/register`, values),
+  }) =>
+    makeApiCall<void>(
+      (data) => axiosInstance.post<ApiResponse>(`/api/auth/register`, data),
+      values
+    ),
 
   verifyOTP: async (values: { email: string; otp: string }) =>
-    await axiosInstance.post<ApiResponse>(`/api/auth/verify-otp`, values),
+    makeApiCall<void>(
+      (data) => axiosInstance.post<ApiResponse>(`/api/auth/verify-otp`, data),
+      values
+    ),
 
   sendOTP: async (values: { email: string }) =>
-    await axiosInstance.post<ApiResponse>(`/api/auth/send-otp`, values),
+    makeApiCall<void>(
+      (data) => axiosInstance.post<ApiResponse>(`/api/auth/send-otp`, data),
+      values
+    ),
 
   forgetPassword: async (values: { email: string }) =>
-    await axiosInstance.post<ApiResponse>(`/api/auth/forget-password`, values),
+    makeApiCall<void>(
+      (data) =>
+        axiosInstance.post<ApiResponse>(`/api/auth/forget-password`, data),
+      values
+    ),
 
   resetPassword: async (values: { token: string; newPassword: string }) =>
-    await axiosInstance.post<ApiResponse>(`/api/auth/reset-password`, values),
+    makeApiCall<void>(
+      (data) =>
+        axiosInstance.post<ApiResponse>(`/api/auth/reset-password`, data),
+      values
+    ),
 
   refreshToken: async (values: { refreshToken: string }) =>
-    await axiosInstance.post<ApiResponse<{ accessToken: AccessToken }>>(
-      `/api/auth/refresh-token`,
+    makeApiCall<AccessToken>(
+      (data) =>
+        axiosInstance.post<ApiResponse<AccessToken>>(
+          `/api/auth/refresh-token`,
+          data
+        ),
       values
     ),
 };
