@@ -1,8 +1,8 @@
 export interface User {
-  id: string;
+  _id: string;
   email: string;
   firstName: string;
-  thumbnail: String;
+  thumbnail: string;
   lastName: string;
   verified: string;
   createAt: string;
