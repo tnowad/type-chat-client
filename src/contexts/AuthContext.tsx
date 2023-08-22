@@ -39,17 +39,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           "Authorization"
         ] = `Bearer ${accessToken}`;
         try {
-          const response = await profileApi.getProfile();
-          if (response.data.data) {
-            setUser(response.data.data.user);
+          const user = await profileApi.getProfile();
+          if (user) {
+            setUser(user);
           }
         } catch (error) {
-          console.error("Error fetching user profile:", error);
+          setCookie("accessToken", "", { expires: new Date(0) });
         }
       } else if (refreshToken) {
         try {
-          const response = await authApi.refreshToken({ refreshToken });
-          const newAccessToken = response.data.data?.accessToken;
+          const newAccessToken = await authApi.refreshToken({ refreshToken });
           if (newAccessToken) {
             setCookie("accessToken", newAccessToken.token, {
               path: "/",
@@ -59,9 +58,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             axiosInstance.defaults.headers.common[
               "Authorization"
             ] = `Bearer ${newAccessToken.token}`;
-            const profileResponse = await profileApi.getProfile();
-            if (profileResponse.data.data) {
-              setUser(profileResponse.data.data.user);
+            const user = await profileApi.getProfile();
+            if (user) {
+              setUser(user);
             }
           }
         } catch (error) {
