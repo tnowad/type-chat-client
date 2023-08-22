@@ -46,6 +46,11 @@ export default function VerifyOTPForm() {
     },
   });
 
+  const sendOTP = () => {
+    authApi.sendOTP({ email: searchParams.get("email")! });
+    toast.success("Your OTP have been sent, please check your email!");
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -95,6 +100,9 @@ export default function VerifyOTPForm() {
             sx={{ mt: 3, mb: 2 }}
           >
             Verify
+          </Button>
+          <Button variant="text" onClick={sendOTP}>
+            Send OTP
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
