@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useState } from "react";
-export default function Page() {
+export default function ConversationSidebarPage() {
   const [conversations, setConversations] = useState();
 
   return (

@@ -1,10 +1,10 @@
 import Layout from "./layout";
-import Page from "./conversation/page";
+import ConversationSidebarPage from "./conversation/page";
 
 export default function DefaultSidebar() {
   return (
     <Layout>
-      <Page />
+      <ConversationSidebarPage />
     </Layout>
   );
 }
