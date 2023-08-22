@@ -8,14 +8,57 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Chat, Message, User } from "@/types/model";
 
-export default function Conversation({ params }: { params: { id: string } }) {
+export default function ConversationPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const { id } = params;
+
+  const [userData, setUserData] = useState<User>();
+  const [chat, setChat] = useState<Chat>();
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  async function fetchUserData(userId: string) {
+    try {
+      const response = await fetch(`API_ENDPOINT/users/${userId}`);
+      const userData = await response.json();
+      setUserData(userData);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  }
+
+  async function fetchChatData(chatId: string) {
+    try {
+      const response = await fetch(`API_ENDPOINT/chats/${chatId}`);
+      const chatData = await response.json();
+      setChat(chatData);
+    } catch (error) {
+      console.error("Error fetching chat data:", error);
+    }
+  }
+
+  async function fetchMessages(chatId: string) {
+    try {
+      const response = await fetch(`API_ENDPOINT/chats/${chatId}/messages`);
+      const messagesData = await response.json();
+      setMessages(messagesData);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
+  }
+
+  useEffect(() => {
+    fetchUserData(id);
+    fetchChatData(id);
+    fetchMessages(id);
+  }, [id]);
+
   const [isSidebarRightOpen, setIsSidebarRightOpen] = useState<boolean>(false);
-  const [messages, setMessages] = useState<{ id: string; message: string }[]>(
-    []
-  );
   return (
     <div className="flex w-full h-screen">
       <div className="flex flex-col grow">
@@ -55,16 +98,6 @@ export default function Conversation({ params }: { params: { id: string } }) {
                     type="text"
                     placeholder="Aa"
                     className="w-full bg-transparent outline-none"
-                    onChange={(event) =>
-                      setMessages((prev) => [
-                        ...prev,
-
-                        {
-                          id: Math.random().toString(),
-                          message: event.target.value,
-                        },
-                      ])
-                    }
                   />
                   <EmojiEmotionsIcon />
                 </div>
