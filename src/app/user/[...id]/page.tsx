@@ -67,7 +67,7 @@ export default function UserPage({ params }: UserPageProps) {
             )}
           </h4>
           <p>{user.email}</p>
-          <button className="text-white bg-yellow-400 hover:bg-yellow-500 font-medium rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 w-2/3 font-sans font-extrabold">
+          <button className="text-white bg-yellow-400 hover:bg-yellow-500 rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 w-2/3 font-sans font-extrabold">
             Add friend
           </button>
         </div>
