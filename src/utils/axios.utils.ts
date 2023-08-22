@@ -1,19 +1,23 @@
 "use client";
+import { getCookie } from "@/utils/cookie.utils";
 import Axios, { AxiosError, AxiosResponse } from "axios";
 
 const getAccessToken = () => {
   try {
-    if (document) return document.cookie.split("accessToken=")[1];
+    return getCookie("accessToken");
   } catch (error) {}
 };
 
 const accessToken = getAccessToken();
+const authorization = accessToken
+  ? { Authorization: `Bearer ${accessToken}` }
+  : {};
 const axiosInstance = Axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
-    Authorization: `Bearer ${accessToken}`,
+    ...authorization,
   },
 });
 
