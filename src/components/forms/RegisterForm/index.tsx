@@ -38,7 +38,7 @@ export default function RegisterForm() {
       firstName: "John",
       lastName: "Doe",
       email: "email@example.com",
-      password: "password",
+      password: "TypeChat01",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
