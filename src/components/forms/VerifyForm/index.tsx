@@ -13,22 +13,36 @@ import Container from "@mui/material/Container";
 import NextLink from "next/link";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { useRouter, useSearchParams } from "next/navigation";
+import authApi from "@/apis/auth.api";
+import { toast } from "react-toastify";
 
 const validationSchema = yup.object({
   otp: yup
     .string()
-    .length(4, "OTP should be have 4 characters")
+    .min(4, "OTP should be have 4 characters")
     .required("OTP is required"),
 });
 
 export default function VerifyOTPForm() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       otp: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      try {
+        await authApi.verifyOTP({
+          ...values,
+          email: searchParams.get("email") as string,
+        });
+        toast.success("Verify successful please login.");
+        router.push("/login");
+      } catch (error) {
+        toast.error((error as Error).message);
+      }
     },
   });
 
