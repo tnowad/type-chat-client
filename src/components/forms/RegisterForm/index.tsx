@@ -17,6 +17,7 @@ import axiosInstance from "@/utils/axios.utils";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { AxiosError } from "axios";
+import authApi from "@/apis/auth.api";
 
 const validationSchema = yup.object({
   firstName: yup.string().required("First name is required."),
@@ -44,10 +45,11 @@ export default function RegisterForm() {
     onSubmit: async (values) => {
       try {
         const response = await axiosInstance.post("/api/auth/register", values);
-        const { success, data, message } = response.data;
+        const { success, message } = response.data;
         if (success) {
           toast.success(message);
-          router.push("/verify");
+          await authApi.sendOTP({ email: values.email });
+          router.push(`/verify?email=${values.email}`);
         } else {
           toast.info(message);
         }
