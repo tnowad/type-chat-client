@@ -1,7 +1,5 @@
-import axiosInstance, { ApiResponse, makeApiCall } from "@/utils/axios.utils";
-import { User } from "@/types/model";
 import { AccessToken, UserCredentials } from "@/types/auth";
-import { AxiosError, AxiosResponse } from "axios";
+import axiosInstance, { ApiResponse, makeApiCall } from "@/utils/axios.utils";
 
 const authApi = {
   login: async (email: string, password: string) =>

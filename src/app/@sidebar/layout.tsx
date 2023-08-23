@@ -4,6 +4,7 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import SettingsIcon from "@mui/icons-material/Settings";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
+import PeopleIcon from "@mui/icons-material/People";
 import { usePathname } from "next/navigation";
 import Sidebar from "@/components/widgets/Sidebar";
 
@@ -18,6 +19,7 @@ export default function SidebarLayout({
     { icon: <ChatBubbleIcon />, text: "Chat", link: "/conversation" },
     { icon: <AlternateEmailIcon />, text: "Activity", link: "/activity" },
     { icon: <TravelExploreIcon />, text: "Discovery", link: "/discovery" },
+    { icon: <PeopleIcon />, text: "Friends", link: "/friends" },
     { icon: <AccountBoxIcon />, text: "Profile", link: "/profile" },
     { icon: <SettingsIcon />, text: "Setting", link: "/setting" },
   ];
