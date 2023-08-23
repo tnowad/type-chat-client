@@ -1,17 +1,16 @@
+import { AuthProvider } from "@/contexts/AuthContext";
 import "@/styles";
+import classnames from "classnames";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import favicon from "@/assets/favicon.ico";
-import classnames from "classnames";
-const inter = Inter({ subsets: ["latin"] });
 import { ToastContainer } from "react-toastify";
-import { AuthProvider } from "@/contexts/AuthContext";
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Type Chat",
   description:
     "Elevate your online conversations with Type Chat's seamless experience.",
-  icons: favicon.src,
+  icons: "/favicon.ico",
 };
 
 export default function RootLayout({
