@@ -1,4 +1,9 @@
 "use client";
+import authApi from "@/apis/auth.api";
+import profileApi from "@/apis/profile.api";
+import { UserCredentials } from "@/types/auth";
+import { User } from "@/types/model";
+import axiosInstance from "@/utils/axios.utils";
 import React, {
   createContext,
   useCallback,
@@ -7,11 +12,6 @@ import React, {
   useState,
 } from "react";
 import { useCookies } from "react-cookie";
-import axiosInstance from "@/utils/axios.utils";
-import profileApi from "@/apis/profile.api";
-import authApi from "@/apis/auth.api";
-import { UserCredentials } from "@/types/auth";
-import { User } from "@/types/model";
 
 interface AuthContextType {
   user: User | null;
@@ -64,6 +64,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
           }
         } catch (error) {
+          setCookie("refreshToken", "", { expires: new Date(0) });
           console.error("Error refreshing access token:", error);
         }
       }
