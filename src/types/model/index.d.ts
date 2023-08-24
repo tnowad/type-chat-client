@@ -8,6 +8,14 @@ export interface User {
   createAt: string;
 }
 
+export interface UserPreview {
+  _id: string;
+  email: string;
+  firstName: string;
+  avatar: string;
+  lastName: string;
+}
+
 export interface Message {
   id: string;
   type: "text" | "image" | "video";
@@ -18,10 +26,24 @@ export interface Message {
 }
 
 export interface Chat {
-  id: string;
+  _id: string;
   participants: User[];
-  messages: Message[];
-  isPrivate: boolean;
+  lastMessage: string;
+  createdAt: string;
+  updatedAt: string;
+  thumbnail: string;
+  name: string;
+  messages: string[];
+}
+
+export interface ChatPreview {
+  _id: string;
+  participants: UserPreview[];
+  lastMessage: string;
+  createdAt: string;
+  updatedAt: string;
+  thumbnail: string;
+  name: string;
 }
 
 export type FriendStatus = "pending" | "accepted" | "rejected";
