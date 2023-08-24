@@ -1,5 +1,5 @@
+import { Friend } from "@/types/model";
 import axiosInstance, { ApiResponse, makeApiCall } from "@/utils/axios.utils";
-import { Friend, User } from "@/types/model";
 
 const friendApi = {
   getFriendsByUser: async (userId: string) =>
@@ -17,6 +17,13 @@ const friendApi = {
         axiosInstance.get<ApiResponse<Friend[]>>(
           `/api/friends/${userId}/pending-requests`
         ),
+      {}
+    ),
+
+  getFriendRelationship: async (friendId: string) =>
+    makeApiCall<Friend>(
+      () =>
+        axiosInstance.get<ApiResponse>(`/api/friends/relationship/${friendId}`),
       {}
     ),
 
