@@ -26,7 +26,7 @@ export default function Loading() {
             <Skeleton variant="text" width={200} />
             <Skeleton variant="text" width={250} />
           </div>
-        </div>,
+        </div>
       );
     }
 

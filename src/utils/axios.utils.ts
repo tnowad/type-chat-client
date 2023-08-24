@@ -8,18 +8,19 @@ const getAccessToken = () => {
   } catch (error) {}
 };
 
-const accessToken = getAccessToken();
-const authorization = accessToken
-  ? { Authorization: `Bearer ${accessToken}` }
-  : {};
 const axiosInstance = Axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
-    ...authorization,
   },
 });
+
+if (getAccessToken()) {
+  axiosInstance.defaults.headers.common[
+    "Authorization"
+  ] = `Bearer ${getAccessToken()}`;
+}
 
 type ApiCall<T> = (data?: any) => Promise<AxiosResponse<ApiResponse<T>, any>>;
 
