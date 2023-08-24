@@ -24,6 +24,8 @@ export interface Chat {
   isPrivate: boolean;
 }
 
+export type FriendStatus = "pending" | "accepted" | "rejected";
+
 export interface Friend {
   _id: string;
   createdAt: string;
@@ -36,5 +38,5 @@ export interface Friend {
     avatar: string;
     _id: string;
   };
-  status: "pending" | "accepted" | "rejected";
+  status: FriendStatus;
 }
