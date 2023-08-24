@@ -1,15 +1,15 @@
 "use client";
-import { motion } from "framer-motion";
+import chatApi from "@/apis/chat.api";
 import useAuth from "@/hooks/useAuth";
-import { Avatar } from "@mui/material";
-import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
-import CallIcon from "@mui/icons-material/Call";
-import VideocamIcon from "@mui/icons-material/Videocam";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import { Chat } from "@/types/model";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import CallIcon from "@mui/icons-material/Call";
+import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import VideocamIcon from "@mui/icons-material/Videocam";
+import { Avatar } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Chat, Message, User } from "@/types/model";
 
 export default function ConversationPage({
   params,
@@ -17,48 +17,26 @@ export default function ConversationPage({
   params: { id: string };
 }) {
   const { id } = params;
-
-  const [userData, setUserData] = useState<User>();
+  const { user } = useAuth();
   const [chat, setChat] = useState<Chat>();
-  const [messages, setMessages] = useState<Message[]>([]);
-
-  async function fetchUserData(userId: string) {
-    try {
-      const response = await fetch(`API_ENDPOINT/users/${userId}`);
-      const userData = await response.json();
-      setUserData(userData);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  }
-
-  async function fetchChatData(chatId: string) {
-    try {
-      const response = await fetch(`API_ENDPOINT/chats/${chatId}`);
-      const chatData = await response.json();
-      setChat(chatData);
-    } catch (error) {
-      console.error("Error fetching chat data:", error);
-    }
-  }
-
-  async function fetchMessages(chatId: string) {
-    try {
-      const response = await fetch(`API_ENDPOINT/chats/${chatId}/messages`);
-      const messagesData = await response.json();
-      setMessages(messagesData);
-    } catch (error) {
-      console.error("Error fetching messages:", error);
-    }
-  }
 
   useEffect(() => {
-    fetchUserData(id);
-    fetchChatData(id);
-    fetchMessages(id);
+    const fetchChat = async () => {
+      const chat = await chatApi.getChatById(id);
+      if (chat) {
+        setChat(chat);
+      }
+    };
+
+    fetchChat();
   }, [id]);
 
   const [isSidebarRightOpen, setIsSidebarRightOpen] = useState<boolean>(false);
+
+  if (!chat || !user) {
+    return null;
+  }
+
   return (
     <div className="flex w-full h-screen">
       <div className="flex flex-col grow">
@@ -69,7 +47,15 @@ export default function ConversationPage({
               <span className="absolute w-2 h-2 bg-green-400 rounded-full right-0 bottom-[2px]" />
             </div>
             <div className="ml-2 font-serif">
-              <p className="text-md">Duncan Laurence</p>
+              <p className="text-md">
+                {chat?.name ??
+                  chat.participants
+                    .filter((participant) => participant._id != user._id)
+                    .map(
+                      (participant) =>
+                        participant.firstName + " " + participant.lastName + " "
+                    )}
+              </p>
               <p className="text-sm text-gray-800">online</p>
             </div>
           </div>
