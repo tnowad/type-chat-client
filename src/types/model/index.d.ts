@@ -2,7 +2,7 @@ export interface User {
   _id: string;
   email: string;
   firstName: string;
-  thumbnail: string;
+  avatar: string;
   lastName: string;
   verified: string;
   createAt: string;
@@ -25,8 +25,16 @@ export interface Chat {
 }
 
 export interface Friend {
-  userId: string;
-  friendId: string;
-  status: "pending" | "accepted" | "rejected";
+  _id: string;
   createdAt: string;
+  updatedAt: string;
+  friend: string;
+  user: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    avatar: string;
+    _id: string;
+  };
+  status: "pending" | "accepted" | "rejected";
 }

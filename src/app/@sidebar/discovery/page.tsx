@@ -38,8 +38,8 @@ export default function DiscoverySidebarPage() {
           >
             <div className="mr-2">
               <Avatar className="h-[50px] w-[50px]">
-                {user.thumbnail && (
-                  <Image src={user.thumbnail} alt={user.firstName} />
+                {user.avatar && (
+                  <Image src={user.avatar} alt={user.firstName} />
                 )}
               </Avatar>
             </div>
