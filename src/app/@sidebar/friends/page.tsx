@@ -1,12 +1,12 @@
 "use client";
-import Image from "next/image";
-import { Typography, InputBase, Paper, Avatar } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { useEffect, useState } from "react";
-import { Friend } from "@/types/model";
-import { useRouter } from "next/navigation";
 import friendApi from "@/apis/friend.api";
 import useAuth from "@/hooks/useAuth";
+import { Friend } from "@/types/model";
+import SearchIcon from "@mui/icons-material/Search";
+import { Avatar, InputBase, Paper, Typography } from "@mui/material";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 export default function FriendsSidebarPage() {
   const { user } = useAuth();
 
