@@ -1,14 +1,15 @@
 "use client";
-import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import withAuth from "@/components/enhancers/withAuth";
+import Sidebar from "@/components/widgets/Sidebar";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import PeopleIcon from "@mui/icons-material/People";
 import SettingsIcon from "@mui/icons-material/Settings";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
-import PeopleIcon from "@mui/icons-material/People";
 import { usePathname } from "next/navigation";
-import Sidebar from "@/components/widgets/Sidebar";
 
-export default function SidebarLayout({
+export default withAuth(function SidebarLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -41,4 +42,4 @@ export default function SidebarLayout({
   }
 
   return <Sidebar sideNavItems={sideNavItems}>{children}</Sidebar>;
-}
+});
