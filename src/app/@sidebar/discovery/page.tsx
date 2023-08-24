@@ -1,12 +1,11 @@
 "use client";
-import Image from "next/image";
-import { Typography, InputBase, Paper, Skeleton, Avatar } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { useEffect, useState } from "react";
-import { User } from "@/types/model";
 import userApi from "@/apis/user.api";
-import Link from "next/link";
+import SidebarItem from "@/components/widgets/SidebarItem";
+import { User } from "@/types/model";
+import SearchIcon from "@mui/icons-material/Search";
+import { InputBase, Paper, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 export default function DiscoverySidebarPage() {
   const [users, setUsers] = useState<User[]>([]);
   const router = useRouter();
@@ -31,23 +30,14 @@ export default function DiscoverySidebarPage() {
       </Paper>
       <div className="h-full w-full flex flex-col gap-y-2">
         {users.map((user) => (
-          <div
-            onClick={() => router.push(`/user/${user._id}`)}
+          <SidebarItem
             key={user._id}
-            className="flex w-full cursor-pointer"
-          >
-            <div className="mr-2">
-              <Avatar className="h-[50px] w-[50px]">
-                {user.avatar && (
-                  <Image src={user.avatar} alt={user.firstName} />
-                )}
-              </Avatar>
-            </div>
-            <div>
-              <Typography>{user.firstName + " " + user.lastName}</Typography>
-              <Typography>{user.email}</Typography>
-            </div>
-          </div>
+            title={user.firstName + " " + user.lastName}
+            onClick={() => {
+              router.push(`/user/${user._id}`);
+            }}
+            description={user.email}
+          />
         ))}
       </div>
     </div>
