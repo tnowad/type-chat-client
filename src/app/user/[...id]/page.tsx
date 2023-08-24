@@ -1,4 +1,5 @@
 "use client";
+import chatApi from "@/apis/chat.api";
 import friendApi from "@/apis/friend.api";
 import userApi from "@/apis/user.api";
 import useAuth from "@/hooks/useAuth";
@@ -7,6 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import DoneIcon from "@mui/icons-material/Done";
 import { Avatar } from "@mui/material";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -20,7 +22,7 @@ export default function UserPage({ params }: UserPageProps) {
   const { user } = useAuth();
   const [userData, setUserData] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
-
+  const router = useRouter();
   const [friend, setFriend] = useState<Friend>();
 
   useEffect(() => {
@@ -102,8 +104,16 @@ export default function UserPage({ params }: UserPageProps) {
     }
   };
 
-  const handleMessage = () => {
-    // Add the logic to handle sending a message
+  const handleCreateNewChat = async () => {
+    try {
+      const chat = await chatApi.createChat([user._id, userData._id]);
+      toast.success("Create new chat successful");
+      if (chat) {
+        router.push(`/conversation/${chat._id}`);
+      }
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
   };
 
   const handleAccept = async () => {
@@ -126,7 +136,7 @@ export default function UserPage({ params }: UserPageProps) {
 
     if (friend?.status === "accepted") {
       return (
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 w-full">
           <button
             onClick={handleUnfriend}
             className="text-white bg-red-400 hover:bg-red-500 rounded-full text-sm px-5 py-2.5 text-center mr-2 mb-2 w-1/2 font-sans font-extrabold"
@@ -134,10 +144,10 @@ export default function UserPage({ params }: UserPageProps) {
             Unfriend
           </button>
           <button
-            onClick={handleMessage}
+            onClick={handleCreateNewChat}
             className="text-white bg-green-400 hover:bg-green-500 rounded-full text-sm px-5 py-2.5 text-center mb-2 w-1/2 font-sans font-extrabold"
           >
-            Message
+            New Chat
           </button>
         </div>
       );
