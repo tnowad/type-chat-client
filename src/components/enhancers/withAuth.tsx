@@ -11,11 +11,11 @@ const withAuth = <P extends object>(
       return <WrappedComponent {...props} />;
     }
 
-    return <p>Please log in to access this page.</p>;
+    return null;
   };
 
   WithAuth.displayName = `withAuth(${
-    WrappedComponent.displayName || WrappedComponent.name
+    WrappedComponent.displayName ?? WrappedComponent.name
   })`;
 
   return WithAuth;
