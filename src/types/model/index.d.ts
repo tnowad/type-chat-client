@@ -16,11 +16,42 @@ export interface UserPreview {
   lastName: string;
 }
 
+type TextContent = {
+  type: "text";
+  text: string;
+};
+
+type ImageContent = {
+  type: "image";
+  imageUrl: string;
+};
+
+type VoiceContent = {
+  type: "voice";
+  audioUrl: string;
+};
+
+type VideoContent = {
+  type: "video";
+  videoUrl: string;
+};
+
+type FileContent = {
+  type: "file";
+  fileUrl: string;
+};
+
+export type MessageContent =
+  | TextContent
+  | ImageContent
+  | VoiceContent
+  | VideoContent
+  | FileContent;
+
 export interface Message {
-  id: string;
-  type: "text" | "image" | "video";
+  _id: string;
   sender: User;
-  content: string;
+  content: MessageContent;
   timestamp: number;
   callDuration?: number;
 }
