@@ -52,7 +52,7 @@ export interface Message {
   _id: string;
   sender: User;
   content: MessageContent;
-  timestamp: number;
+  createdAt: string;
   callDuration?: number;
 }
 
