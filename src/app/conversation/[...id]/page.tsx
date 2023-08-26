@@ -1,16 +1,18 @@
 "use client";
 import chatApi from "@/apis/chat.api";
+import messageApi from "@/apis/message.api";
+import MessageItem from "@/components/widgets/MessageItem";
 import useAuth from "@/hooks/useAuth";
-import { Chat } from "@/types/model";
+import { Chat, Message } from "@/types/model";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import BackspaceIcon from "@mui/icons-material/Backspace";
 import CallIcon from "@mui/icons-material/Call";
-import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import SendIcon from "@mui/icons-material/Send";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import { Avatar } from "@mui/material";
-import { useEffect, useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
 export default function ConversationPage({
   params,
 }: {
@@ -19,6 +21,11 @@ export default function ConversationPage({
   const { id } = params;
   const { user } = useAuth();
   const [chat, setChat] = useState<Chat>();
+  const [messages, setMessages] = useState<Message[]>();
+
+  const [messageInput, setMessageInput] = useState<string>("");
+  const [fileInput, setFileInput] = useState<File | null>(null);
+  const inputFile = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchChat = async () => {
@@ -28,7 +35,14 @@ export default function ConversationPage({
       }
     };
 
+    const fetchMessages = async () => {
+      const messages = await messageApi.getMessagesByChat(id);
+      if (messages) {
+        setMessages(messages);
+      }
+    };
     fetchChat();
+    fetchMessages();
   }, [id]);
 
   const [isSidebarRightOpen, setIsSidebarRightOpen] = useState<boolean>(false);
@@ -36,6 +50,29 @@ export default function ConversationPage({
   if (!chat || !user) {
     return null;
   }
+
+  const handleAttackFile = () => {
+    if (inputFile.current) {
+      inputFile.current.click();
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!messageInput && !fileInput) {
+      return;
+    }
+
+    if (messageInput) {
+      await messageApi.createMessage(id, { type: "text", text: messageInput });
+    }
+
+    if (fileInput) {
+      await messageApi.createMessage(id, { type: "file", file: fileInput });
+    }
+
+    setMessageInput("");
+    setFileInput(null);
+  };
 
   return (
     <div className="flex w-full h-screen">
@@ -71,21 +108,46 @@ export default function ConversationPage({
           <div className="h-full flex flex-col">
             <div className="overflow-y-scroll h-[88vh] flex flex-col-reverse">
               <div>
-                <div className="h-[200vh]">Message list</div>
+                <div className="">
+                  {messages?.map((message) => (
+                    <MessageItem key={message._id} message={message} />
+                  ))}
+                </div>
               </div>
             </div>
             <div className="flex w-full items-center justify-between p-2 gap-3 h-[6vh]">
               <div>
-                <AttachFileIcon />
+                <input
+                  type="file"
+                  id="file"
+                  ref={inputFile}
+                  className="hidden"
+                  onChange={(e) =>
+                    setFileInput(e.target.files?.item(0) ?? null)
+                  }
+                />
+                <span onClick={handleAttackFile}>
+                  <AttachFileIcon />
+                </span>
               </div>
+              {fileInput && (
+                <div className="bg-gray-100 rounded-full whitespace-nowrap h-full flex items-center p-2 gap-2">
+                  <span className="ml-2 bg-">{fileInput.name}</span>
+                  <span onClick={() => setFileInput(null)}>
+                    <BackspaceIcon />
+                  </span>
+                </div>
+              )}
               <div className="w-full">
                 <div className="bg-gray-100 flex rounded-full p-2">
                   <input
                     type="text"
                     placeholder="Aa"
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
                     className="w-full bg-transparent outline-none"
                   />
-                  <EmojiEmotionsIcon />
+                  <SendIcon onClick={sendMessage} />
                 </div>
               </div>
               <div>
